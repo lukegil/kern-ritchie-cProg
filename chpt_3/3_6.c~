@@ -1,0 +1,11 @@
+#include <stdio.h>
+
+int main() {
+
+}
+
+
+void itoa(int number, int string, int length) {
+	
+
+}

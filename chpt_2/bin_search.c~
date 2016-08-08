@@ -1,0 +1,15 @@
+#include <stdio.h>
+int binsearch(int x, int v[], int n);
+
+int main() {
+
+	return 0;
+}
+
+int binsearch(int x, int v[], int n) {
+
+
+
+
+
+}

@@ -1,0 +1,14 @@
+#include <stdio.h>
+
+
+int main() {
+	unsigned int c;
+	printf("a : %d", 'a');
+	printf("z : %d", 'z');
+	printf("A : %d", 'A');
+	printf("Z : %d", 'Z');
+
+
+
+	return 0;
+}
