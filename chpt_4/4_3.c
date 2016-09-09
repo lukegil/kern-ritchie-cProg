@@ -36,7 +36,7 @@ double modulus(double main_num, double bound);
 
 int main() {
 	int type;
-	double op2;
+	double op2, op3;
 	char s[MAXOP];
 	
 	while ((type = getop(s)) != EOF) {
@@ -68,6 +68,17 @@ int main() {
 		case '%':
 			op2 = pop();
 			push( modulus(pop(), op2));
+			break;
+		case 'D':
+			op2 = pop();
+			push(op2);
+			push(op2);
+			break;
+		case 'S':
+			op2 = pop();
+			op3 = pop();
+			push(op2);
+			push(op3);
 			break;
 		/* Printing and formatting */
 		case '\n':
