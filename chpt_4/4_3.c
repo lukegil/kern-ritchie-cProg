@@ -3,6 +3,12 @@
    4-3 : Given the basic framework, add the modulus operator 
    		 and provisions for negative numbers
 
+   4-4 : Add commands to 
+         - print the top element of the stack without popping
+         - duplicate the top element (without popping)
+         - swap the top two elements
+		 - clear the stack
+
 */
 
 
@@ -66,6 +72,11 @@ int main() {
 		/* Printing and formatting */
 		case '\n':
 			printf("\t%.8g\n", pop());
+			break;
+		case 'P':
+			op2 = pop();
+			printf("\t%.8g\n", op2);
+			push(op2);
 			break;
 		default:
 			printf("error : unknown command %s\n", s);
