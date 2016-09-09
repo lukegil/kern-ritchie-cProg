@@ -1,3 +1,11 @@
+/* Exercises 4-3 through 4-10 ; Page 79
+
+   4-3 : Given the basic framework, add the modulus operator 
+   		 and provisions for negative numbers
+
+*/
+
+
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
 
@@ -7,6 +15,7 @@
 int getop(char []);
 void push(double);
 double pop(void);
+double modulus(double main_num, double bound);
 
 
 /* reverse polish calculator
@@ -50,6 +59,11 @@ int main() {
 				printf("error : zero divisor\n");
 			//LG TODO : add raise error
 			break;
+		case '%':
+			op2 = pop();
+			push( modulus(pop(), op2));
+			break;
+		/* Printing and formatting */
 		case '\n':
 			printf("\t%.8g\n", pop());
 			break;
@@ -60,6 +74,34 @@ int main() {
 		}
 	}
 	return 0;				
+}
+
+/* modulus() : Performs modulus on double, as opposed to only ints
+
+   @param : dividend - the first number in the equation
+   @param : divisor - The second number in the equation
+   @return : the answer
+   
+   1. subtract until you hit less than 0
+   2. print the number from the iteration before
+    
+*/
+double modulus(double main_num, double bound) {
+	double prev_num;
+	
+	if (main_num < 0.0)
+		main_num *= -1.0;
+
+	if (bound < 0.0) 
+		printf("divisor must be > 0");
+	//LG TODO : allow for divisors of any sign
+
+	while (main_num >= 0.0){
+		prev_num = main_num;
+		main_num -= bound;
+	}
+	return prev_num;
+	
 }
 
 #define MAXVAL 100 /* maximum depth of val stack */
@@ -117,8 +159,9 @@ void ungetch(int);
 
    1. skip all spaces
    2. if you hit a non-digit && non-decimal, return it
-   3. read in a number. 
-   4. Push the final char (that's not the number) to the ungetch()/getch() stack
+   3. if a '-', check if negative number, else return
+   5. read in a number. 
+   6. Push the final char (that's not the number) to the ungetch()/getch() stack
 
 */
 
@@ -131,10 +174,20 @@ int getop(char s[]) {
 		;
 
 	s[1] = '\0';
-	if (!isdigit(c) && c != '.')
+	if (!isdigit(c) && c != '.' && c != '-')
 		return c; /* not a number */
-	
-	i = 0; 
+
+	i = 0;
+
+	if (c == '-')  {
+		if (!isdigit(c = getch())) {
+			ungetch(c);
+			return '-';
+		} 
+		s[i++] = '-';
+		s[i] = c;
+	}
+
 	if (isdigit(c)) /* collect integer part */
 		while (isdigit(s[++i] = c = getch()));
 
