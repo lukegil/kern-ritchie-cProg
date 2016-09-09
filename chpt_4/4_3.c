@@ -17,10 +17,12 @@
 
 #define MAXOP 100 /* max size of operand or operator */
 #define NUMBER '0' /* signal that a number was found */
+#define MAXVAL 100 /* maximum depth of val stack */
 
 int getop(char []);
 void push(double);
 double pop(void);
+void reset_sp(void);
 double modulus(double main_num, double bound);
 
 
@@ -69,6 +71,16 @@ int main() {
 			op2 = pop();
 			push( modulus(pop(), op2));
 			break;
+		/* Printing and formatting */
+		case '\n':
+			printf("\t%.8g\n", pop());
+			break;
+		case 'P':
+			op2 = pop();
+			printf("\t%.8g\n", op2);
+			push(op2);
+			break;
+		/* Stack Management */
 		case 'D':
 			op2 = pop();
 			push(op2);
@@ -80,14 +92,8 @@ int main() {
 			push(op2);
 			push(op3);
 			break;
-		/* Printing and formatting */
-		case '\n':
-			printf("\t%.8g\n", pop());
-			break;
-		case 'P':
-			op2 = pop();
-			printf("\t%.8g\n", op2);
-			push(op2);
+		case 'C':
+			reset_sp();
 			break;
 		default:
 			printf("error : unknown command %s\n", s);
@@ -126,7 +132,6 @@ double modulus(double main_num, double bound) {
 	
 }
 
-#define MAXVAL 100 /* maximum depth of val stack */
 
 int sp = 0; /* next free stack position */
 double val[MAXVAL]; /* value stack */
@@ -162,12 +167,15 @@ double pop(void) {
 	if (sp > 0)
 		return val[--sp];
 	else {
-		printf("error : stack empty\n");
+		printf("Error : stack empty\n");
 		//LG TODO : Add error 
 		return 0.0;
 	}
 }   
 
+void reset_sp(void) {
+	sp = 0;
+}
 
 #include <ctype.h>
 
