@@ -8,16 +8,38 @@
          - duplicate the top element (without popping)
          - swap the top two elements
 		 - clear the stack
+   4-5 : Add access to library functions like sin, exp, and pow
 
 */
 
 
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
+#include <ctype.h>
+#include <math.h>
 
 #define MAXOP 100 /* max size of operand or operator */
 #define NUMBER '0' /* signal that a number was found */
 #define MAXVAL 100 /* maximum depth of val stack */
+
+#define SINE 330
+#define COS 325
+#define TAN 323
+#define ASIN 427
+#define ACOS 422
+#define ATAN 420
+#define EXP 333
+#define LOG 322
+#define POW 342
+#define SQRT 458
+#define CEIL 413
+#define FLOOR 546
+
+#define PRINT 557
+#define DUPE 430
+#define SWAP 443
+#define CLEAR 519
+
 
 int getop(char []);
 void push(double);
@@ -44,8 +66,43 @@ int main() {
 	while ((type = getop(s)) != EOF) {
 		switch (type) {
 		case NUMBER:
-			push(atof(s));
+			Push(atof(s));
 			break;
+		/* unary ops */
+		case SINE:
+			push(sin(pop()));
+			break;
+		case COS:
+			push(cos(pop()));
+			break;
+		case TAN:
+			push(tan(pop()));
+			break;
+		case ASIN:
+			push(asin(pop()));
+			break;
+		case ACOS:
+			push(acos(pop()));
+			break;
+		case ATAN:
+			push(atan(pop()));
+			break;
+		case EXP:
+			push(exp(pop()));
+			break;
+		case LOG:
+			push(log(pop()));
+			break;
+		case SQRT:
+			push(sqrt(pop()));
+			break;
+		case CEIL:
+			push(ceil(pop()));
+			break;
+		case FLOOR:
+			push(floor(pop()));
+			break;
+
 		/* communicative ops */
 		case '+':
 			push(pop() + pop());
@@ -71,28 +128,33 @@ int main() {
 			op2 = pop();
 			push( modulus(pop(), op2));
 			break;
+		case POW:
+			op2 = pop();
+			push(pow(pop(),op2));
+			break;
+
 		/* Printing and formatting */
 		case '\n':
 			printf("\t%.8g\n", pop());
 			break;
-		case 'P':
+		case PRINT:
 			op2 = pop();
 			printf("\t%.8g\n", op2);
 			push(op2);
 			break;
 		/* Stack Management */
-		case 'D':
+		case DUPE:
 			op2 = pop();
 			push(op2);
 			push(op2);
 			break;
-		case 'S':
+		case SWAP:
 			op2 = pop();
 			op3 = pop();
 			push(op2);
 			push(op3);
 			break;
-		case 'C':
+		case CLEAR:
 			reset_sp();
 			break;
 		default:
@@ -132,6 +194,13 @@ double modulus(double main_num, double bound) {
 	
 }
 
+
+
+
+
+/******************/
+/** VALUE STACK **/
+/****************/
 
 int sp = 0; /* next free stack position */
 double val[MAXVAL]; /* value stack */
@@ -177,7 +246,11 @@ void reset_sp(void) {
 	sp = 0;
 }
 
-#include <ctype.h>
+
+
+/******************/
+/** READING INPUT **/
+/****************/
 
 int getch(void);
 void ungetch(int);
@@ -198,24 +271,38 @@ void ungetch(int);
 int getop(char s[]) {
 	int i; //indx of s
 	int c; //current char
-
+	int char_val;
 	
 	while ((s[0] = c = getch()) == ' ' || c == '\t')
 		;
-
 	s[1] = '\0';
-	if (!isdigit(c) && c != '.' && c != '-')
+
+	/* Find '+', '/', etc */
+	if (!isdigit(c) && !isalpha(c) && c != '.' && c != '-')
 		return c; /* not a number */
+
+	/* Find keywords */
+	if (isalpha(c)) {
+		char_val = 0;
+		do {
+			c = tolower(c);
+			char_val += c;
+		} while (isalpha(c = getch()));
+		if (c != EOF)
+			ungetch(c);
+		return char_val;
+	}			
 
 	i = 0;
 
+	/* Is it negative or just minus? */
 	if (c == '-')  {
 		if (!isdigit(c = getch())) {
 			ungetch(c);
 			return '-';
 		} 
-		s[i++] = '-';
-		s[i] = c;
+		s[i] = '-';
+		s[++i] = c;
 	}
 
 	if (isdigit(c)) /* collect integer part */
